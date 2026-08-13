@@ -1,0 +1,24 @@
+{
+  "name": "backend2",
+  "version": "1.0.0",
+  "description": "a backend series",
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "homepage": "https://github.com/Priyadarshee13/backend-basics#readme",
+  "bugs": {
+    "url": "https://github.com/Priyadarshee13/backend-basics/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Priyadarshee13/backend-basics.git"
+  },
+  "license": "ISC",
+  "author": "pg",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
