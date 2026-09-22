@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "a backend series",
   "types": "module",
-  
   "keywords": [
     "javascript",
     "backend"
@@ -22,5 +21,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6"
   }
 }
