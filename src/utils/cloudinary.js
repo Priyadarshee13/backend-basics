@@ -1,4 +1,4 @@
-import {v2 as cloudinary} from "cloudnary"
+import {v2 as cloudinary} from "cloudinary"
 import fs from "fs"
 
   cloudinary.config({ 
@@ -41,4 +41,6 @@ const uploadImage = async (imagePath) => {
     } catch (error) {
       console.error(error);
     }
-};
+}
+
+export {uploadOnCloudinary}

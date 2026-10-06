@@ -1,42 +1,53 @@
+import express from "express"
 import multer from "multer"
-
-const express = require('express')
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
+import fs from "fs"
+import path from "path"
 
 const app = express()
 
-app.post('/profile', upload.single('avatar'), function (req, res, next) {
-  // req.file is the `avatar` file
-  // req.body will hold the text fields, if there were any
-})
-
-app.post('/photos/upload', upload.array('photos', 12), function (req, res, next) {
-  // req.files is array of `photos` files
-  // req.body will contain the text fields, if there were any
-})
-
-const uploadMiddleware = upload.fields([{ name: 'avatar', maxCount: 1 }, { name: 'gallery', maxCount: 8 }])
-app.post('/cool-profile', uploadMiddleware, function (req, res, next) {
-  // req.files is an object (String -> Array) where fieldname is the key, and the value is array of files
-  //
-  // e.g.
-  //  req.files['avatar'][0] -> File
-  //  req.files['gallery'] -> Array
-  //
-  // req.body will contain the text fields, if there were any
-})
-
+const uploadDir = "./public/temp"
+fs.mkdirSync(uploadDir, { recursive: true })
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./public/temp")
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9)
+    cb(null, unique + path.extname(file.originalname))
   },
-  filename: function (req, file, cb) {
-   
-      cb(null, file.originalname)
-    
-  }
 })
 
+export const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+})
 
+// single file
+app.post("/profile", upload.single("avatar"), (req, res) => {
+  // req.file -> the avatar file, req.body -> text fields
+  res.json({ file: req.file })
+})
+
+// multiple files, same field
+app.post("/photos/upload", upload.array("photos", 12), (req, res) => {
+  res.json({ files: req.files })
+})
+
+// multiple fields
+const uploadMiddleware = upload.fields([
+  { name: "avatar", maxCount: 1 },
+  { name: "gallery", maxCount: 8 },
+])
+app.post("/cool-profile", uploadMiddleware, (req, res) => {
+  // req.files.avatar[0], req.files.gallery
+  res.json({ files: req.files })
+})
+
+// error handler for multer errors (file too large, etc.)
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ error: err.message })
+  }
+  next(err)
+})
+
+app.listen(3000, () => console.log("Server running on port 3000"))
